@@ -1,3 +1,3 @@
-# flutter_application_1
+# F.O.R.K.
 
-A new Flutter project.
+Rate the restaurants you visit
