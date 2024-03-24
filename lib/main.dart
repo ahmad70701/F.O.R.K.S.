@@ -16,12 +16,6 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.blueGrey[300],
         ),
         body: MainAppForm(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-          
-          },
-          child: Text('+'),
-        ),
       ),
     );
   }
@@ -35,10 +29,10 @@ class MainAppForm extends StatefulWidget {
 class _MainAppFormState extends State<MainAppForm> {
   String? mainDishErrorMessage;
   bool showMainDishError = false;
-  
+
   String? sideLineErrorMessage;
   bool showSideLineError = false;
-  
+
   String? drinkErrorMessage;
   bool showDrinkError = false;
 
@@ -54,6 +48,34 @@ class _MainAppFormState extends State<MainAppForm> {
   String? ServiceErrorMessage;
   bool showServiceError = false;
 
+  double? mainDishValue;
+  double? sideLineValue;
+  double? drinkValue;
+  double? ambienceValue;
+  double? locationValue;
+  double? priceValue;
+  double? serviceValue;
+
+  double? totalCalculation() {
+    double? total=0;
+    double? numberGiven = ((mainDishValue ?? 0) +
+        (sideLineValue ?? 0) +
+        (drinkValue ?? 0) +
+        (ambienceValue ?? 0) +
+        (locationValue ?? 0) +
+        (priceValue ?? 0) +
+        (serviceValue ?? 0));
+    total += (mainDishValue != null) ? 25 : 0;
+    total += (sideLineValue != null) ? 15 : 0;
+    total += (drinkValue != null) ? 10 : 0;
+    total += (ambienceValue != null) ? 15 : 0;
+    total += (locationValue!= null) ? 10 : 0;
+    total += (priceValue != null) ? 15 : 0;
+    total += (serviceValue != null) ? 10 : 0;
+
+    return numberGiven/total*100;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -61,14 +83,14 @@ class _MainAppFormState extends State<MainAppForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 6),
-          child: TextFormField(
-            decoration: const InputDecoration(
-              border: UnderlineInputBorder(),
-              labelText: 'Enter restaurant name:',
+            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 6),
+            child: TextFormField(
+              decoration: const InputDecoration(
+                border: UnderlineInputBorder(),
+                labelText: 'Enter restaurant name:',
+              ),
             ),
           ),
-        ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
             child: TextFormField(
@@ -80,6 +102,7 @@ class _MainAppFormState extends State<MainAppForm> {
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
+                  mainDishValue = double.tryParse(value);
                   if (value.isNotEmpty) {
                     double? val = double.tryParse(value);
                     if (val == null || val < 0 || val > 25) {
@@ -108,6 +131,7 @@ class _MainAppFormState extends State<MainAppForm> {
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
+                  sideLineValue = double.tryParse(value);
                   if (value.isNotEmpty) {
                     double? val = double.tryParse(value);
                     if (val == null || val < 0 || val > 15) {
@@ -136,6 +160,7 @@ class _MainAppFormState extends State<MainAppForm> {
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
+                  drinkValue = double.tryParse(value);
                   if (value.isNotEmpty) {
                     double? val = double.tryParse(value);
                     if (val == null || val < 0 || val > 10) {
@@ -164,6 +189,7 @@ class _MainAppFormState extends State<MainAppForm> {
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
+                  ambienceValue = double.tryParse(value);
                   if (value.isNotEmpty) {
                     double? val = double.tryParse(value);
                     if (val == null || val < 0 || val > 15) {
@@ -192,6 +218,7 @@ class _MainAppFormState extends State<MainAppForm> {
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
+                  locationValue = double.tryParse(value);
                   if (value.isNotEmpty) {
                     double? val = double.tryParse(value);
                     if (val == null || val < 0 || val > 10) {
@@ -220,9 +247,10 @@ class _MainAppFormState extends State<MainAppForm> {
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
+                  priceValue = double.tryParse(value);
                   if (value.isNotEmpty) {
                     double? val = double.tryParse(value);
-                    if (val == null || val < 0 || val > 10) {
+                    if (val == null || val < 0 || val > 15) {
                       priceErrorMessage = 'Enter a number between 0 and 15';
                       showPriceError = true;
                     } else {
@@ -248,6 +276,7 @@ class _MainAppFormState extends State<MainAppForm> {
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
+                  serviceValue = double.tryParse(value);
                   if (value.isNotEmpty) {
                     double? val = double.tryParse(value);
                     if (val == null || val < 0 || val > 10) {
@@ -266,34 +295,15 @@ class _MainAppFormState extends State<MainAppForm> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
-            child: TextFormField(
-              decoration: InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Sideline (0-10):',
-                errorText: showSideLineError ? sideLineErrorMessage : null,
+            padding: const EdgeInsets.all(8.0),
+            child: Align(
+              alignment: Alignment.bottomRight,
+              child: Text(
+                'Total: ${totalCalculation()}',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              keyboardType: TextInputType.number,
-              onChanged: (value) {
-                setState(() {
-                  if (value.isNotEmpty) {
-                    double? val = double.tryParse(value);
-                    if (val == null || val < 0 || val > 10) {
-                      sideLineErrorMessage = 'Enter a number between 0 and 10';
-                      showSideLineError = true;
-                    } else {
-                      sideLineErrorMessage = null;
-                      showSideLineError = false;
-                    }
-                  } else {
-                    sideLineErrorMessage = null;
-                    showSideLineError = false;
-                  }
-                });
-              },
             ),
           ),
-          
         ],
       ),
     );
