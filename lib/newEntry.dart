@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class NewEntry extends StatelessWidget {
   const NewEntry({super.key});
@@ -33,6 +34,8 @@ class _MainAppFormState extends State<MainAppForm> {
     super.initState();
     _loadData();
   }
+
+  List<Map<String, dynamic>> entries = [];
 
   String? mainDishErrorMessage;
   bool showMainDishError = false;
@@ -85,25 +88,39 @@ class _MainAppFormState extends State<MainAppForm> {
   }
 
   Future<void> _handleSubmit() async {
+    Map<String, dynamic> entry = {
+      'restaurantName': restaurantName ?? '',
+      'mainDishValue': mainDishValue ?? 0,
+      'sideLineValue': sideLineValue ?? 0,
+      'drinkValue': drinkValue ?? 0,
+      'ambienceValue': ambienceValue ?? 0,
+      'locationValue': locationValue ?? 0,
+      'priceValue': priceValue ?? 0,
+      'serviceValue': serviceValue ?? 0,
+      'Score': totalCalculation() ?? 0,
+    };
+    entries.add(entry);
+    String jsonString = jsonEncode(entries);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    // prefs.setString('restaurantName',restaurantName);
-    prefs.setDouble('mainDishValue', mainDishValue ?? 0);
-    prefs.setDouble('sideLineValue', sideLineValue ?? 0);
-    prefs.setDouble('drinkValue', drinkValue ?? 0);
-    prefs.setDouble('ambienceValue', ambienceValue ?? 0);
-    prefs.setDouble('locationValue', locationValue ?? 0);
-    prefs.setDouble('priceValue', priceValue ?? 0);
-    prefs.setDouble('serviceValue', serviceValue ?? 0);
-    prefs.setDouble('Score', totalCalculation() ?? 0);
-    print("Data saved!!!");
-    print(prefs.getDouble('mainDishValue'));
+    await prefs.setString('entries', jsonString);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Entry saved!'),
+      ),
+    );
   }
 
   Future<void> _loadData() async {
-
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    print('This is the main dishValue:');
-    print(prefs.getDouble('mainDishValue'));
+    String? jsonListString = prefs.getString('entries');
+
+    if (jsonListString != null) {
+      List<dynamic> jsonList = jsonDecode(jsonListString);
+      jsonList.forEach((element) {
+        entries.add(element);
+      });
+    }
   }
 
   @override
@@ -119,6 +136,7 @@ class _MainAppFormState extends State<MainAppForm> {
                 border: UnderlineInputBorder(),
                 labelText: 'Enter restaurant name:',
               ),
+              onChanged: (value) => {restaurantName = value},
             ),
           ),
           Padding(
@@ -329,7 +347,7 @@ class _MainAppFormState extends State<MainAppForm> {
             child: Align(
               alignment: Alignment.bottomRight,
               child: Text(
-                'Score: ${(totalCalculation()??0).toStringAsFixed(2)}',
+                'Score: ${(totalCalculation() ?? 0).toStringAsFixed(2)}',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
