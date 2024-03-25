@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_application_1/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -132,6 +133,7 @@ class _MainAppFormState extends State<MainAppForm> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 6),
             child: TextFormField(
+              textInputAction: TextInputAction.next,
               decoration: const InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Enter restaurant name:',
@@ -142,6 +144,7 @@ class _MainAppFormState extends State<MainAppForm> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
             child: TextFormField(
+              textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Main Dish (0-25):',
@@ -171,6 +174,7 @@ class _MainAppFormState extends State<MainAppForm> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
             child: TextFormField(
+              textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Sideline (0-15):',
@@ -200,6 +204,7 @@ class _MainAppFormState extends State<MainAppForm> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
             child: TextFormField(
+              textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Drink (0-10):',
@@ -229,6 +234,7 @@ class _MainAppFormState extends State<MainAppForm> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
             child: TextFormField(
+              textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Ambience (0-15):',
@@ -258,6 +264,7 @@ class _MainAppFormState extends State<MainAppForm> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
             child: TextFormField(
+              textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Location (0-10):',
@@ -287,6 +294,7 @@ class _MainAppFormState extends State<MainAppForm> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
             child: TextFormField(
+              textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Price (0-15):',
@@ -316,6 +324,7 @@ class _MainAppFormState extends State<MainAppForm> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
             child: TextFormField(
+              // textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Service (0-10):',
@@ -357,7 +366,13 @@ class _MainAppFormState extends State<MainAppForm> {
             child: Align(
               alignment: Alignment.bottomRight,
               child: ElevatedButton(
-                onPressed: () => _handleSubmit(),
+                onPressed: () => {
+                  _handleSubmit(),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Home()))
+                  
+                  },
                 child: Text("Save"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueGrey[300],

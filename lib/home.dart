@@ -66,7 +66,6 @@ class _HomeApp extends State<HomeApp> {
         child: Column(
           children: [
             Center(
-              heightFactor: 30.0,
               child: Text("There is nothing here!"),
             ),
             Padding(
@@ -132,7 +131,6 @@ class _HomeApp extends State<HomeApp> {
                     MaterialPageRoute(builder: (context) => NewEntry()),
                   );
                   await _loadData();
-
                 },
                 child: Text("+"),
                 style: ElevatedButton.styleFrom(
@@ -148,8 +146,10 @@ class _HomeApp extends State<HomeApp> {
             child: Align(
               alignment: Alignment.bottomLeft,
               child: ElevatedButton(
-                onPressed: () {
-                  clearSharedPreferences();
+                onPressed: () async {
+                  await clearSharedPreferences();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+
                 },
                 child: Text("Clear All"),
                 style: ElevatedButton.styleFrom(
