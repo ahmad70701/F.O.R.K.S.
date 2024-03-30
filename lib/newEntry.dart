@@ -36,8 +36,7 @@ class _MainAppFormState extends State<MainAppForm> {
     _loadData();
   }
 
-  List<Map<String, dynamic>> entries = [];
-
+  Map<String?, Map<String, dynamic>> mappedEntries = {};
   String? mainDishErrorMessage;
   bool showMainDishError = false;
 
@@ -100,13 +99,13 @@ class _MainAppFormState extends State<MainAppForm> {
       'serviceValue': serviceValue ?? 0,
       'Score': totalCalculation() ?? 0,
     };
-    entries.add(entry);
-    String jsonString = jsonEncode(entries);
+    mappedEntries.addAll({restaurantName: entry});
+    String jsonString = jsonEncode(mappedEntries);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('entries', jsonString);
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('Entry saved!'),
       ),
     );
@@ -114,15 +113,14 @@ class _MainAppFormState extends State<MainAppForm> {
 
   Future<void> _loadData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? jsonListString = prefs.getString('entries');
+    String? jsonMapString = prefs.getString('entries');
 
-    if (jsonListString != null) {
-      List<dynamic> jsonList = jsonDecode(jsonListString);
-      jsonList.forEach((element) {
-        entries.add(element);
-      });
+    if (jsonMapString != null) {
+      Map<String, dynamic> decodedMap = jsonDecode(jsonMapString);
+      mappedEntries.addAll(decodedMap.cast<String?, Map<String, dynamic>>());
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -369,10 +367,8 @@ class _MainAppFormState extends State<MainAppForm> {
                 onPressed: () => {
                   _handleSubmit(),
                   Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Home()))
-                  
-                  },
+                      context, MaterialPageRoute(builder: (context) => Home()))
+                },
                 child: Text("Save"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueGrey[300],

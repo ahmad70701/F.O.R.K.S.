@@ -35,30 +35,33 @@ class _HomeApp extends State<HomeApp> {
   }
 
   List<Map<String, dynamic>> entries = [];
-
+  Map<String?, dynamic> mappedEntries = {};
   Future<void> _loadData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? jsonListString = prefs.getString('entries');
-    if (jsonListString != null) {
-      List<dynamic> jsonList = jsonDecode(jsonListString);
-      List<Map<String, dynamic>> newEntries = [];
-      jsonList.forEach((element) {
-        newEntries.add(element);
-      });
+    String? jsonMapString = prefs.getString('entries');
+    if (jsonMapString != null) {
+      Map<String?, dynamic> decodedJsonMap = jsonDecode(jsonMapString);
+      Map<String?, dynamic> newMappedEntries = {};
+      newMappedEntries.addAll(decodedJsonMap.cast<String?, dynamic>());
+
       setState(() {
-        entries = newEntries;
+        mappedEntries = newMappedEntries;
       });
     }
+    print(mappedEntries);
   }
 
   Future<void> clearSharedPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();
+    setState(() {
+    mappedEntries = {};
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (entries.isEmpty) {
+    if (mappedEntries.isEmpty) {
       return RefreshIndicator(
         onRefresh: () async {
           await _loadData;
@@ -100,20 +103,22 @@ class _HomeApp extends State<HomeApp> {
         child: Column(children: [
           Expanded(
             child: ListView.builder(
-                itemCount: entries.length,
+                itemCount: mappedEntries.length,
                 itemBuilder: (BuildContext context, int index) {
                   return Card(
                     elevation: 3,
                     margin: EdgeInsets.all(8),
                     child: ListTile(
                       title: Text(
-                          'Restaurant Name: ${entries[index]['restaurantName']}'),
-                      onTap: () => {print(entries)},
+                          'Restaurant Name: ${mappedEntries[mappedEntries.keys.elementAt(index)]['restaurantName']}'),
+                      onTap: () => {
+                        print(mappedEntries.values.elementAt(index)['Score'])
+                      },
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                              'Score: ${entries[index]['Score'].toStringAsFixed(2)}'),
+                              'Score: ${mappedEntries[mappedEntries.keys.elementAt(index)]['Score'].toStringAsFixed(2)}'),
                         ],
                       ),
                     ),
@@ -148,8 +153,6 @@ class _HomeApp extends State<HomeApp> {
               child: ElevatedButton(
                 onPressed: () async {
                   await clearSharedPreferences();
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
-
                 },
                 child: Text("Clear All"),
                 style: ElevatedButton.styleFrom(
