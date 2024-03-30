@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_application_1/newEntry.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:flutter_application_1/dataController.dart';
 
 class Home extends StatelessWidget {
   @override
@@ -28,43 +29,35 @@ class HomeApp extends StatefulWidget {
 }
 
 class _HomeApp extends State<HomeApp> {
+  homeDataController dataController = new homeDataController();
+
   @override
   void initState() {
     super.initState();
-    _loadData();
+    _loadData()  ;
   }
 
-  List<Map<String, dynamic>> entries = [];
-  Map<String?, dynamic> mappedEntries = {};
-  Future<void> _loadData() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? jsonMapString = prefs.getString('entries');
-    if (jsonMapString != null) {
-      Map<String?, dynamic> decodedJsonMap = jsonDecode(jsonMapString);
-      Map<String?, dynamic> newMappedEntries = {};
-      newMappedEntries.addAll(decodedJsonMap.cast<String?, dynamic>());
-
-      setState(() {
-        mappedEntries = newMappedEntries;
-      });
-    }
-    print(mappedEntries);
-  }
-
-  Future<void> clearSharedPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
+  Future<void> _loadData()  async {
+    Map<String?, dynamic> newMappedEntries =
+        await dataController.loadDataForHome();
     setState(() {
-    mappedEntries = {};
+      dataController.mappedEntries = newMappedEntries;
+    });
+  }
+
+  Future<void> clearAll() async {
+    await dataController.clearAllData();
+    setState(() {
+      dataController.mappedEntries = {};
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (mappedEntries.isEmpty) {
+    if (dataController.mappedEntries.isEmpty) {
       return RefreshIndicator(
         onRefresh: () async {
-          await _loadData;
+          await _loadData()   ;
         },
         child: Column(
           children: [
@@ -76,12 +69,14 @@ class _HomeApp extends State<HomeApp> {
               child: Align(
                 alignment: Alignment.bottomRight,
                 child: ElevatedButton(
-                  onPressed: () async {
-                    await Navigator.push(
+                  onPressed: () {
+                    Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => NewEntry()),
                     );
-                    await _loadData();
+                    setState(() {
+                      _loadData()   ;
+                    });
                   },
                   child: Text("+"),
                   style: ElevatedButton.styleFrom(
@@ -98,27 +93,30 @@ class _HomeApp extends State<HomeApp> {
     } else {
       return RefreshIndicator(
         onRefresh: () async {
-          await _loadData();
+          setState(() {
+            _loadData()   ;
+          });
         },
         child: Column(children: [
           Expanded(
             child: ListView.builder(
-                itemCount: mappedEntries.length,
+                itemCount: dataController.mappedEntries.length,
                 itemBuilder: (BuildContext context, int index) {
                   return Card(
                     elevation: 3,
                     margin: EdgeInsets.all(8),
                     child: ListTile(
                       title: Text(
-                          'Restaurant Name: ${mappedEntries[mappedEntries.keys.elementAt(index)]['restaurantName']}'),
+                          'Restaurant Name: ${dataController.mappedEntries[dataController.mappedEntries.keys.elementAt(index)]['restaurantName']}'),
                       onTap: () => {
-                        print(mappedEntries.values.elementAt(index)['Score'])
+                        print(dataController.mappedEntries.values
+                            .elementAt(index)['Score'])
                       },
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                              'Score: ${mappedEntries[mappedEntries.keys.elementAt(index)]['Score'].toStringAsFixed(2)}'),
+                              'Score: ${dataController.mappedEntries[dataController.mappedEntries.keys.elementAt(index)]['Score'].toStringAsFixed(2)}'),
                         ],
                       ),
                     ),
@@ -135,7 +133,9 @@ class _HomeApp extends State<HomeApp> {
                     context,
                     MaterialPageRoute(builder: (context) => NewEntry()),
                   );
-                  await _loadData();
+                  setState(() {
+                    _loadData()   ;
+                  });
                 },
                 child: Text("+"),
                 style: ElevatedButton.styleFrom(
@@ -152,7 +152,9 @@ class _HomeApp extends State<HomeApp> {
               alignment: Alignment.bottomLeft,
               child: ElevatedButton(
                 onPressed: () async {
-                  await clearSharedPreferences();
+                  setState(() {
+                    clearAll();
+                  });
                 },
                 child: Text("Clear All"),
                 style: ElevatedButton.styleFrom(

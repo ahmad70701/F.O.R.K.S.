@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_application_1/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:flutter_application_1/dataController.dart';
 
 class NewEntry extends StatelessWidget {
   const NewEntry({super.key});
@@ -30,97 +31,13 @@ class MainAppForm extends StatefulWidget {
 }
 
 class _MainAppFormState extends State<MainAppForm> {
+  newEntrydataController newDataController = new newEntrydataController();
+
   @override
   void initState() {
     super.initState();
-    _loadData();
+    newDataController.loadDataForNewEntry();
   }
-
-  Map<String?, Map<String, dynamic>> mappedEntries = {};
-  String? mainDishErrorMessage;
-  bool showMainDishError = false;
-
-  String? sideLineErrorMessage;
-  bool showSideLineError = false;
-
-  String? drinkErrorMessage;
-  bool showDrinkError = false;
-
-  String? ambienceErrorMessage;
-  bool showAmbienceError = false;
-
-  String? locationErrorMessage;
-  bool showLocationError = false;
-
-  String? priceErrorMessage;
-  bool showPriceError = false;
-
-  String? ServiceErrorMessage;
-  bool showServiceError = false;
-
-  String? restaurantName;
-  double? mainDishValue;
-  double? sideLineValue;
-  double? drinkValue;
-  double? ambienceValue;
-  double? locationValue;
-  double? priceValue;
-  double? serviceValue;
-
-  double? totalCalculation() {
-    double? total = 0;
-    double? numberGiven = ((mainDishValue ?? 0) +
-        (sideLineValue ?? 0) +
-        (drinkValue ?? 0) +
-        (ambienceValue ?? 0) +
-        (locationValue ?? 0) +
-        (priceValue ?? 0) +
-        (serviceValue ?? 0));
-    total += (mainDishValue != null) ? 25 : 0;
-    total += (sideLineValue != null) ? 15 : 0;
-    total += (drinkValue != null) ? 10 : 0;
-    total += (ambienceValue != null) ? 15 : 0;
-    total += (locationValue != null) ? 10 : 0;
-    total += (priceValue != null) ? 15 : 0;
-    total += (serviceValue != null) ? 10 : 0;
-
-    return numberGiven / total * 100;
-  }
-
-  Future<void> _handleSubmit() async {
-    Map<String, dynamic> entry = {
-      'restaurantName': restaurantName ?? '',
-      'mainDishValue': mainDishValue ?? 0,
-      'sideLineValue': sideLineValue ?? 0,
-      'drinkValue': drinkValue ?? 0,
-      'ambienceValue': ambienceValue ?? 0,
-      'locationValue': locationValue ?? 0,
-      'priceValue': priceValue ?? 0,
-      'serviceValue': serviceValue ?? 0,
-      'Score': totalCalculation() ?? 0,
-    };
-    mappedEntries.addAll({restaurantName: entry});
-    String jsonString = jsonEncode(mappedEntries);
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('entries', jsonString);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Entry saved!'),
-      ),
-    );
-  }
-
-  Future<void> _loadData() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? jsonMapString = prefs.getString('entries');
-
-    if (jsonMapString != null) {
-      Map<String, dynamic> decodedMap = jsonDecode(jsonMapString);
-      mappedEntries.addAll(decodedMap.cast<String?, Map<String, dynamic>>());
-    }
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +53,7 @@ class _MainAppFormState extends State<MainAppForm> {
                 border: UnderlineInputBorder(),
                 labelText: 'Enter restaurant name:',
               ),
-              onChanged: (value) => {restaurantName = value},
+              onChanged: (value) => {newDataController.restaurantName = value},
             ),
           ),
           Padding(
@@ -146,24 +63,24 @@ class _MainAppFormState extends State<MainAppForm> {
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Main Dish (0-25):',
-                errorText: showMainDishError ? mainDishErrorMessage : null,
+                errorText: newDataController.showMainDishError ? newDataController.mainDishErrorMessage : null,
               ),
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
-                  mainDishValue = double.tryParse(value);
+                  newDataController.mainDishValue = double.tryParse(value);
                   if (value.isNotEmpty) {
                     double? val = double.tryParse(value);
                     if (val == null || val < 0 || val > 25) {
-                      mainDishErrorMessage = 'Enter a number between 0 and 25';
-                      showMainDishError = true;
+                      newDataController.mainDishErrorMessage = 'Enter a number between 0 and 25';
+                      newDataController.showMainDishError = true;
                     } else {
-                      mainDishErrorMessage = null;
-                      showMainDishError = false;
+                      newDataController.mainDishErrorMessage = null;
+                      newDataController.showMainDishError = false;
                     }
                   } else {
-                    mainDishErrorMessage = null;
-                    showMainDishError = false;
+                    newDataController.mainDishErrorMessage = null;
+                    newDataController.showMainDishError = false;
                   }
                 });
               },
@@ -176,24 +93,24 @@ class _MainAppFormState extends State<MainAppForm> {
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Sideline (0-15):',
-                errorText: showSideLineError ? sideLineErrorMessage : null,
+                errorText: newDataController.showSideLineError ? newDataController.sideLineErrorMessage : null,
               ),
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
-                  sideLineValue = double.tryParse(value);
+                  newDataController.sideLineValue = double.tryParse(value);
                   if (value.isNotEmpty) {
                     double? val = double.tryParse(value);
                     if (val == null || val < 0 || val > 15) {
-                      sideLineErrorMessage = 'Enter a number between 0 and 15';
-                      showSideLineError = true;
+                      newDataController.sideLineErrorMessage = 'Enter a number between 0 and 15';
+                      newDataController.showSideLineError = true;
                     } else {
-                      sideLineErrorMessage = null;
-                      showSideLineError = false;
+                      newDataController.sideLineErrorMessage = null;
+                      newDataController.showSideLineError = false;
                     }
                   } else {
-                    sideLineErrorMessage = null;
-                    showSideLineError = false;
+                    newDataController.sideLineErrorMessage = null;
+                    newDataController.showSideLineError = false;
                   }
                 });
               },
@@ -206,24 +123,24 @@ class _MainAppFormState extends State<MainAppForm> {
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Drink (0-10):',
-                errorText: showDrinkError ? drinkErrorMessage : null,
+                errorText: newDataController.showDrinkError ? newDataController.drinkErrorMessage : null,
               ),
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
-                  drinkValue = double.tryParse(value);
+                  newDataController.drinkValue = double.tryParse(value);
                   if (value.isNotEmpty) {
                     double? val = double.tryParse(value);
                     if (val == null || val < 0 || val > 10) {
-                      drinkErrorMessage = 'Enter a number between 0 and 10';
-                      showDrinkError = true;
+                      newDataController.drinkErrorMessage = 'Enter a number between 0 and 10';
+                      newDataController.showDrinkError = true;
                     } else {
-                      drinkErrorMessage = null;
-                      showDrinkError = false;
+                      newDataController.drinkErrorMessage = null;
+                      newDataController.showDrinkError = false;
                     }
                   } else {
-                    drinkErrorMessage = null;
-                    showDrinkError = false;
+                    newDataController.drinkErrorMessage = null;
+                    newDataController.showDrinkError = false;
                   }
                 });
               },
@@ -236,24 +153,24 @@ class _MainAppFormState extends State<MainAppForm> {
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Ambience (0-15):',
-                errorText: showAmbienceError ? ambienceErrorMessage : null,
+                errorText: newDataController.showAmbienceError ? newDataController.ambienceErrorMessage : null,
               ),
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
-                  ambienceValue = double.tryParse(value);
+                  newDataController.ambienceValue = double.tryParse(value);
                   if (value.isNotEmpty) {
                     double? val = double.tryParse(value);
                     if (val == null || val < 0 || val > 15) {
-                      ambienceErrorMessage = 'Enter a number between 0 and 15';
-                      showAmbienceError = true;
+                      newDataController.ambienceErrorMessage = 'Enter a number between 0 and 15';
+                      newDataController.showAmbienceError = true;
                     } else {
-                      ambienceErrorMessage = null;
-                      showAmbienceError = false;
+                      newDataController.ambienceErrorMessage = null;
+                      newDataController.showAmbienceError = false;
                     }
                   } else {
-                    ambienceErrorMessage = null;
-                    showAmbienceError = false;
+                    newDataController.ambienceErrorMessage = null;
+                    newDataController.showAmbienceError = false;
                   }
                 });
               },
@@ -266,24 +183,24 @@ class _MainAppFormState extends State<MainAppForm> {
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Location (0-10):',
-                errorText: showLocationError ? locationErrorMessage : null,
+                errorText: newDataController.showLocationError ? newDataController.locationErrorMessage : null,
               ),
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
-                  locationValue = double.tryParse(value);
+                  newDataController.locationValue = double.tryParse(value);
                   if (value.isNotEmpty) {
                     double? val = double.tryParse(value);
                     if (val == null || val < 0 || val > 10) {
-                      locationErrorMessage = 'Enter a number between 0 and 10';
-                      showLocationError = true;
+                      newDataController.locationErrorMessage = 'Enter a number between 0 and 10';
+                      newDataController.showLocationError = true;
                     } else {
-                      locationErrorMessage = null;
-                      showLocationError = false;
+                      newDataController.locationErrorMessage = null;
+                      newDataController.showLocationError = false;
                     }
                   } else {
-                    locationErrorMessage = null;
-                    showLocationError = false;
+                    newDataController.locationErrorMessage = null;
+                    newDataController.showLocationError = false;
                   }
                 });
               },
@@ -296,24 +213,24 @@ class _MainAppFormState extends State<MainAppForm> {
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Price (0-15):',
-                errorText: showPriceError ? priceErrorMessage : null,
+                errorText: newDataController.showPriceError ? newDataController.priceErrorMessage : null,
               ),
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
-                  priceValue = double.tryParse(value);
+                  newDataController.priceValue = double.tryParse(value);
                   if (value.isNotEmpty) {
                     double? val = double.tryParse(value);
                     if (val == null || val < 0 || val > 15) {
-                      priceErrorMessage = 'Enter a number between 0 and 15';
-                      showPriceError = true;
+                      newDataController.priceErrorMessage = 'Enter a number between 0 and 15';
+                      newDataController.showPriceError = true;
                     } else {
-                      priceErrorMessage = null;
-                      showPriceError = false;
+                      newDataController.priceErrorMessage = null;
+                      newDataController.showPriceError = false;
                     }
                   } else {
-                    priceErrorMessage = null;
-                    showPriceError = false;
+                    newDataController.priceErrorMessage = null;
+                    newDataController.showPriceError = false;
                   }
                 });
               },
@@ -326,24 +243,24 @@ class _MainAppFormState extends State<MainAppForm> {
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Service (0-10):',
-                errorText: showServiceError ? ServiceErrorMessage : null,
+                errorText: newDataController.showServiceError ? newDataController.serviceErrorMessage : null,
               ),
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
-                  serviceValue = double.tryParse(value);
+                  newDataController.serviceValue = double.tryParse(value);
                   if (value.isNotEmpty) {
                     double? val = double.tryParse(value);
                     if (val == null || val < 0 || val > 10) {
-                      ServiceErrorMessage = 'Enter a number between 0 and 10';
-                      showServiceError = true;
+                      newDataController.serviceErrorMessage = 'Enter a number between 0 and 10';
+                      newDataController.showServiceError = true;
                     } else {
-                      ServiceErrorMessage = null;
-                      showServiceError = false;
+                      newDataController.serviceErrorMessage = null;
+                      newDataController.showServiceError = false;
                     }
                   } else {
-                    ServiceErrorMessage = null;
-                    showServiceError = false;
+                    newDataController.serviceErrorMessage = null;
+                    newDataController.showServiceError = false;
                   }
                 });
               },
@@ -354,7 +271,7 @@ class _MainAppFormState extends State<MainAppForm> {
             child: Align(
               alignment: Alignment.bottomRight,
               child: Text(
-                'Score: ${(totalCalculation() ?? 0).toStringAsFixed(2)}',
+                'Score: ${(newDataController.totalCalculation() ?? 0).toStringAsFixed(2)}',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
@@ -365,7 +282,7 @@ class _MainAppFormState extends State<MainAppForm> {
               alignment: Alignment.bottomRight,
               child: ElevatedButton(
                 onPressed: () => {
-                  _handleSubmit(),
+                  newDataController.handleSubmit(),
                   Navigator.push(
                       context, MaterialPageRoute(builder: (context) => Home()))
                 },
