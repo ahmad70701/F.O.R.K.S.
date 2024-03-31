@@ -37,7 +37,6 @@ class _listApp extends State<listApp> {
     setState(() {
       dataController.mappedEntries = newMappedEntries;
     });
-    print("doneWithLoading");
   }
 
   Future<void> clearAll() async {
