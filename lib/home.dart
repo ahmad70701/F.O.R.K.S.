@@ -12,12 +12,23 @@ class Home extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Welcome to FORKS!'),
+          title: const Text('Welcome to FORKS!'),
           centerTitle: true,
           shadowColor: Colors.amber,
           backgroundColor: Colors.blueGrey[300],
         ),
         body: HomeApp(),
+        floatingActionButton: Builder(
+          builder: (context) => FloatingActionButton(
+            onPressed: () {
+            Navigator.push(
+            context,
+              MaterialPageRoute(builder: (context) => NewEntry()),
+      );
+    },
+    child: const Icon(Icons.add),
+  ),
+),
       ),
     );
   }
@@ -29,7 +40,7 @@ class HomeApp extends StatefulWidget {
 }
 
 class _HomeApp extends State<HomeApp> {
-  homeDataController dataController = new homeDataController();
+  ListOfRestDataController dataController = new ListOfRestDataController();
 
   @override
   void initState() {
@@ -68,23 +79,19 @@ class _HomeApp extends State<HomeApp> {
               padding: const EdgeInsets.all(8.0),
               child: Align(
                 alignment: Alignment.bottomRight,
-                child: ElevatedButton(
+                child: FloatingActionButton(
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => NewEntry()),
                     );
                     setState(() {
-                      _loadData()   ;
+                      _loadData();
                     });
                   },
                   child: Text("+"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueGrey[300],
-                    foregroundColor: Colors.black,
-                    shadowColor: Colors.black12,
-                  ),
                 ),
+                
               ),
             )
           ],
@@ -109,8 +116,7 @@ class _HomeApp extends State<HomeApp> {
                       title: Text(
                           'Restaurant Name: ${dataController.mappedEntries[dataController.mappedEntries.keys.elementAt(index)]['restaurantName']}'),
                       onTap: () => {
-                        print(dataController.mappedEntries.values
-                            .elementAt(index)['Score'])
+                      
                       },
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,22 +133,17 @@ class _HomeApp extends State<HomeApp> {
             padding: const EdgeInsets.all(8.0),
             child: Align(
               alignment: Alignment.bottomRight,
-              child: ElevatedButton(
+              child: FloatingActionButton(
                 onPressed: () async {
                   await Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => NewEntry()),
                   );
                   setState(() {
-                    _loadData()   ;
+                    _loadData();
                   });
                 },
                 child: Text("+"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueGrey[300],
-                  foregroundColor: Colors.black,
-                  shadowColor: Colors.black12,
-                ),
               ),
             ),
           ),
@@ -150,18 +151,14 @@ class _HomeApp extends State<HomeApp> {
             padding: const EdgeInsets.all(8.0),
             child: Align(
               alignment: Alignment.bottomLeft,
-              child: ElevatedButton(
+              child: FloatingActionButton(
                 onPressed: () async {
                   setState(() {
                     clearAll();
                   });
                 },
                 child: Text("Clear All"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueGrey[300],
-                  foregroundColor: Colors.black,
-                  shadowColor: Colors.black12,
-                ),
+
               ),
             ),
           )

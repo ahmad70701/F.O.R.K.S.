@@ -87,12 +87,12 @@ class newEntrydataController {
   }
 }
 
-class homeDataController {
+class ListOfRestDataController {
   //Properties
   Map<String?, dynamic> mappedEntries = {};
 
   //Contstructor
-  homeDataController();
+  ListOfRestDataController();
 
   //Methods
   Future<Map<String?, dynamic>> loadDataForHome() async {

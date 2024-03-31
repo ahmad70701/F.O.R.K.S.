@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_application_1/home.dart';
+import 'package:flutter_application_1/listOfRestaurants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:flutter_application_1/dataController.dart';
@@ -11,8 +12,7 @@ class NewEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: Text('Welcome to FORKS!'),
           centerTitle: true,
@@ -20,8 +20,7 @@ class NewEntry extends StatelessWidget {
           backgroundColor: Colors.blueGrey[300],
         ),
         body: MainAppForm(),
-      ),
-    );
+      );
   }
 }
 
@@ -32,6 +31,7 @@ class MainAppForm extends StatefulWidget {
 
 class _MainAppFormState extends State<MainAppForm> {
   newEntrydataController newDataController = new newEntrydataController();
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -48,6 +48,8 @@ class _MainAppFormState extends State<MainAppForm> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 6),
             child: TextFormField(
+              focusNode: _focusNode,
+              autofocus: true,
               textInputAction: TextInputAction.next,
               decoration: const InputDecoration(
                 border: UnderlineInputBorder(),
@@ -63,7 +65,9 @@ class _MainAppFormState extends State<MainAppForm> {
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Main Dish (0-25):',
-                errorText: newDataController.showMainDishError ? newDataController.mainDishErrorMessage : null,
+                errorText: newDataController.showMainDishError
+                    ? newDataController.mainDishErrorMessage
+                    : null,
               ),
               keyboardType: TextInputType.number,
               onChanged: (value) {
@@ -72,7 +76,8 @@ class _MainAppFormState extends State<MainAppForm> {
                   if (value.isNotEmpty) {
                     double? val = double.tryParse(value);
                     if (val == null || val < 0 || val > 25) {
-                      newDataController.mainDishErrorMessage = 'Enter a number between 0 and 25';
+                      newDataController.mainDishErrorMessage =
+                          'Enter a number between 0 and 25';
                       newDataController.showMainDishError = true;
                     } else {
                       newDataController.mainDishErrorMessage = null;
@@ -93,7 +98,9 @@ class _MainAppFormState extends State<MainAppForm> {
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Sideline (0-15):',
-                errorText: newDataController.showSideLineError ? newDataController.sideLineErrorMessage : null,
+                errorText: newDataController.showSideLineError
+                    ? newDataController.sideLineErrorMessage
+                    : null,
               ),
               keyboardType: TextInputType.number,
               onChanged: (value) {
@@ -102,7 +109,8 @@ class _MainAppFormState extends State<MainAppForm> {
                   if (value.isNotEmpty) {
                     double? val = double.tryParse(value);
                     if (val == null || val < 0 || val > 15) {
-                      newDataController.sideLineErrorMessage = 'Enter a number between 0 and 15';
+                      newDataController.sideLineErrorMessage =
+                          'Enter a number between 0 and 15';
                       newDataController.showSideLineError = true;
                     } else {
                       newDataController.sideLineErrorMessage = null;
@@ -123,7 +131,9 @@ class _MainAppFormState extends State<MainAppForm> {
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Drink (0-10):',
-                errorText: newDataController.showDrinkError ? newDataController.drinkErrorMessage : null,
+                errorText: newDataController.showDrinkError
+                    ? newDataController.drinkErrorMessage
+                    : null,
               ),
               keyboardType: TextInputType.number,
               onChanged: (value) {
@@ -132,7 +142,8 @@ class _MainAppFormState extends State<MainAppForm> {
                   if (value.isNotEmpty) {
                     double? val = double.tryParse(value);
                     if (val == null || val < 0 || val > 10) {
-                      newDataController.drinkErrorMessage = 'Enter a number between 0 and 10';
+                      newDataController.drinkErrorMessage =
+                          'Enter a number between 0 and 10';
                       newDataController.showDrinkError = true;
                     } else {
                       newDataController.drinkErrorMessage = null;
@@ -153,7 +164,9 @@ class _MainAppFormState extends State<MainAppForm> {
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Ambience (0-15):',
-                errorText: newDataController.showAmbienceError ? newDataController.ambienceErrorMessage : null,
+                errorText: newDataController.showAmbienceError
+                    ? newDataController.ambienceErrorMessage
+                    : null,
               ),
               keyboardType: TextInputType.number,
               onChanged: (value) {
@@ -162,7 +175,8 @@ class _MainAppFormState extends State<MainAppForm> {
                   if (value.isNotEmpty) {
                     double? val = double.tryParse(value);
                     if (val == null || val < 0 || val > 15) {
-                      newDataController.ambienceErrorMessage = 'Enter a number between 0 and 15';
+                      newDataController.ambienceErrorMessage =
+                          'Enter a number between 0 and 15';
                       newDataController.showAmbienceError = true;
                     } else {
                       newDataController.ambienceErrorMessage = null;
@@ -183,7 +197,9 @@ class _MainAppFormState extends State<MainAppForm> {
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Location (0-10):',
-                errorText: newDataController.showLocationError ? newDataController.locationErrorMessage : null,
+                errorText: newDataController.showLocationError
+                    ? newDataController.locationErrorMessage
+                    : null,
               ),
               keyboardType: TextInputType.number,
               onChanged: (value) {
@@ -192,7 +208,8 @@ class _MainAppFormState extends State<MainAppForm> {
                   if (value.isNotEmpty) {
                     double? val = double.tryParse(value);
                     if (val == null || val < 0 || val > 10) {
-                      newDataController.locationErrorMessage = 'Enter a number between 0 and 10';
+                      newDataController.locationErrorMessage =
+                          'Enter a number between 0 and 10';
                       newDataController.showLocationError = true;
                     } else {
                       newDataController.locationErrorMessage = null;
@@ -213,7 +230,9 @@ class _MainAppFormState extends State<MainAppForm> {
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Price (0-15):',
-                errorText: newDataController.showPriceError ? newDataController.priceErrorMessage : null,
+                errorText: newDataController.showPriceError
+                    ? newDataController.priceErrorMessage
+                    : null,
               ),
               keyboardType: TextInputType.number,
               onChanged: (value) {
@@ -222,7 +241,8 @@ class _MainAppFormState extends State<MainAppForm> {
                   if (value.isNotEmpty) {
                     double? val = double.tryParse(value);
                     if (val == null || val < 0 || val > 15) {
-                      newDataController.priceErrorMessage = 'Enter a number between 0 and 15';
+                      newDataController.priceErrorMessage =
+                          'Enter a number between 0 and 15';
                       newDataController.showPriceError = true;
                     } else {
                       newDataController.priceErrorMessage = null;
@@ -243,7 +263,9 @@ class _MainAppFormState extends State<MainAppForm> {
               decoration: InputDecoration(
                 border: UnderlineInputBorder(),
                 labelText: 'Service (0-10):',
-                errorText: newDataController.showServiceError ? newDataController.serviceErrorMessage : null,
+                errorText: newDataController.showServiceError
+                    ? newDataController.serviceErrorMessage
+                    : null,
               ),
               keyboardType: TextInputType.number,
               onChanged: (value) {
@@ -252,7 +274,8 @@ class _MainAppFormState extends State<MainAppForm> {
                   if (value.isNotEmpty) {
                     double? val = double.tryParse(value);
                     if (val == null || val < 0 || val > 10) {
-                      newDataController.serviceErrorMessage = 'Enter a number between 0 and 10';
+                      newDataController.serviceErrorMessage =
+                          'Enter a number between 0 and 10';
                       newDataController.showServiceError = true;
                     } else {
                       newDataController.serviceErrorMessage = null;
@@ -281,10 +304,9 @@ class _MainAppFormState extends State<MainAppForm> {
             child: Align(
               alignment: Alignment.bottomRight,
               child: ElevatedButton(
-                onPressed: () => {
-                  newDataController.handleSubmit(),
-                  Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => Home()))
+                onPressed: () {
+                  newDataController.handleSubmit();
+                  Navigator.pop(context);
                 },
                 child: Text("Save"),
                 style: ElevatedButton.styleFrom(
